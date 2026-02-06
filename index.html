@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Number Line Addition</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>Open Number Line Addition</h1>
+        <div id="controls-top">
+          <div id="problem-display">
+            <span id="equation-text">Press 'New Problem' to start</span>
+          </div>
+          <button id="new-problem-btn" class="primary-btn">New Problem</button>
+        </div>
+      </header>
+      
+      <main>
+        <div id="canvas-container">
+          <!-- SVG will be injected here or created by renderer -->
+          <svg id="number-line-svg" width="100%" height="100%"></svg>
+        </div>
+      </main>
+
+      <footer>
+        <div id="actions">
+          <button id="jump-10-btn" class="action-btn" disabled>+10</button>
+          <button id="jump-1-btn" class="action-btn" disabled>+1</button>
+        </div>
+        <div id="history">
+          <button id="undo-btn" class="secondary-btn" disabled>Undo</button>
+          <button id="reset-btn" class="secondary-btn" disabled>Reset</button>
+        </div>
+        <div id="feedback" class="feedback-msg"></div>
+      </footer>
+    </div>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
