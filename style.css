@@ -360,16 +360,30 @@ footer {
   background: rgba(255, 255, 255, 0.3);
   border: none;
   color: white;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   cursor: pointer;
   font-weight: bold;
   font-family: var(--font-family);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .icon-btn:hover {
   background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.icon-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
 
 .legal-footer {

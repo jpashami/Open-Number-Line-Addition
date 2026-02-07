@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         editMode.classList.add('hidden');
     });
 
-    btnSaveCustom.addEventListener('click', () => {
+    const handleSave = () => {
         const start = parseInt(inputStart.value);
         const change = parseInt(inputChange.value);
 
@@ -195,6 +195,15 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState.startCustomGame(start, change);
         displayMode.classList.remove('hidden');
         editMode.classList.add('hidden');
+    };
+
+    btnSaveCustom.addEventListener('click', handleSave);
+
+    inputStart.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') inputChange.focus();
+    });
+    inputChange.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSave();
     });
 
     // Close on outside click

@@ -48,6 +48,24 @@ export class GameState {
         this.notify();
     }
 
+    startCustomGame(start, changeVal) {
+        this.startNumber = start;
+        this.numberToAdd = changeVal;
+
+        if (this.mode === 'subtraction') {
+            this.targetSum = this.startNumber - this.numberToAdd;
+        } else {
+            // Addition or Commutative
+            this.targetSum = this.startNumber + this.numberToAdd;
+            this.baseA = this.startNumber;
+            this.baseB = this.numberToAdd;
+        }
+
+        this.currentSum = this.startNumber;
+        this.jumps = [];
+        this.notify();
+    }
+
     swapCommutative() {
         if (this.mode !== 'commutative') return;
 
