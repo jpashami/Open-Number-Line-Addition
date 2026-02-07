@@ -29,19 +29,58 @@ body {
   height: 90vh;
   background: var(--card-bg);
   border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 header {
-  padding: 20px 30px;
+  padding: 15px 30px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.header-content {
+  width: 100%;
+  display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.mode-selector {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px;
+  border-radius: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 6px 12px;
+  font-family: var(--font-family);
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.mode-btn.active {
+  background: white;
+  color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mode-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
 h1 {
@@ -51,16 +90,23 @@ h1 {
 
 #controls-top {
   display: flex;
-  gap: 20px;
+  width: 100%;
+  justify-content: space-between;
   align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px 20px;
+  border-radius: 12px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
 }
 
 #problem-display {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  background: rgba(255,255,255,0.2);
-  padding: 10px 20px;
-  border-radius: 10px;
+  color: white;
 }
 
 main {
@@ -89,6 +135,26 @@ footer {
 #actions {
   display: flex;
   gap: 20px;
+  justify-content: center;
+  width: 100%;
+}
+
+.button-group {
+  display: flex;
+  gap: 15px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.sub-btn {
+  background: var(--error-color);
+}
+
+.sub-btn:hover:not(:disabled) {
+  background: #e53e3e;
+  /* darker red */
 }
 
 .action-btn {
@@ -101,7 +167,7 @@ footer {
   transition: transform 0.1s, background 0.2s;
   background: var(--primary-color);
   color: white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .action-btn:hover:not(:disabled) {
@@ -163,13 +229,132 @@ footer {
   color: var(--success-color);
 }
 
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.modal.hidden {
+  display: none !important;
+  opacity: 0;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #718096;
+}
+
+.modal-body h3 {
+  color: var(--secondary-color);
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+.tip {
+  background: #ebf8ff;
+  border-left: 4px solid var(--accent-color);
+  padding: 10px;
+  margin-top: 20px;
+  font-style: italic;
+}
+
+/* Header extras */
+.title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.version-badge {
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: var(--font-family);
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.legal-footer {
+  text-align: center;
+  color: #a0aec0;
+  font-size: 0.8rem;
+  margin-top: 10px;
+}
+
 .shake {
-  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+  animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
 }
 
 @keyframes shake {
-  10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
+
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }

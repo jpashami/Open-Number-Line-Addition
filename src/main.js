@@ -11,37 +11,74 @@ document.addEventListener('DOMContentLoaded', () => {
     const equationTextEl = document.getElementById('equation-text');
     const btn10 = document.getElementById('jump-10-btn');
     const btn1 = document.getElementById('jump-1-btn');
+    const btnNeg10 = document.getElementById('jump-neg-10-btn');
+    const btnNeg1 = document.getElementById('jump-neg-1-btn');
     const btnUndo = document.getElementById('undo-btn');
     const btnReset = document.getElementById('reset-btn');
     const btnNew = document.getElementById('new-problem-btn');
+    const btnSwap = document.getElementById('swap-btn');
+    const btnHelp = document.getElementById('help-btn');
+    const btnCloseHelp = document.getElementById('close-help-btn');
+    const helpModal = document.getElementById('help-modal');
     const feedbackEl = document.getElementById('feedback');
+    const addButtons = document.getElementById('add-buttons');
+    const subButtons = document.getElementById('sub-buttons');
+    const modeBtns = document.querySelectorAll('.mode-btn');
 
     // Subscribe to state changes
     gameState.subscribe((state) => {
         // Render SVG
         renderer.render(state);
 
-        // Update UI
-        if (state.targetSum > 0) {
-
-            if (state.isComplete()) {
-                equationTextEl.innerHTML = `<span>${state.startNumber}</span> + <span>${state.numberToAdd}</span> = <span style="color:var(--success-color);">${state.targetSum}</span>`;
+        // Update UI Visibility based on mode
+        if (state.mode === 'subtraction') {
+            addButtons.classList.add('hidden');
+            subButtons.classList.remove('hidden');
+            btnSwap.classList.add('hidden');
+        } else {
+            addButtons.classList.remove('hidden');
+            subButtons.classList.add('hidden');
+            if (state.mode === 'commutative') {
+                btnSwap.classList.remove('hidden');
             } else {
-                equationTextEl.innerHTML = `<span>${state.startNumber}</span> + <span>${state.numberToAdd}</span> = <span>?</span>`;
+                btnSwap.classList.add('hidden');
             }
+        }
 
-            // Calc remainder
-            const remaining = state.targetSum - state.currentSum;
+        // Update Equation Text
+        if (state.targetSum !== undefined) {
+            let equationHTML = '';
+            if (state.mode === 'subtraction') {
+                // e.g. 50 - 20 = ? (Target is 30)
+                if (state.isComplete()) {
+                    equationHTML = `<span>${state.startNumber}</span> - <span>${state.numberToAdd}</span> = <span style="color:var(--success-color);">${state.targetSum}</span>`;
+                } else {
+                    equationHTML = `<span>${state.startNumber}</span> - <span>${state.numberToAdd}</span> = <span>?</span>`;
+                }
+            } else {
+                // Addition / Commutative
+                if (state.isComplete()) {
+                    equationHTML = `<span>${state.startNumber}</span> + <span>${state.numberToAdd}</span> = <span style="color:var(--success-color);">${state.targetSum}</span>`;
+                } else {
+                    equationHTML = `<span>${state.startNumber}</span> + <span>${state.numberToAdd}</span> = <span>?</span>`;
+                }
+            }
+            equationTextEl.innerHTML = equationHTML;
 
-            // Buttons state
-            // Disable if move would exceed target
-            btn10.disabled = remaining < 10; // Simple logic: if < 10 left, can't jump 10? 
-            // Actually, for educational purposes, maybe we let them try and fail?
-            // The GameState.addJump returns false if invalid.
-            // Let's disable to guide them, or keep enabled and show shake?
-            // Plan said "Logic to check...". Let's guide them via disabled state for better UX.
-            btn10.disabled = remaining < 10 || state.isComplete();
-            btn1.disabled = remaining < 1 || state.isComplete();
+
+            // Button States
+            if (state.mode === 'subtraction') {
+                // Moving down towards target
+                const remainingDist = state.currentSum - state.targetSum;
+                // btnNeg10 (jump -10)
+                btnNeg10.disabled = remainingDist < 10 || state.isComplete();
+                btnNeg1.disabled = remainingDist < 1 || state.isComplete();
+            } else {
+                // Moving up towards target
+                const remaining = state.targetSum - state.currentSum;
+                btn10.disabled = remaining < 10 || state.isComplete();
+                btn1.disabled = remaining < 1 || state.isComplete();
+            }
 
             btnUndo.disabled = state.jumps.length === 0 || state.isComplete();
             btnReset.disabled = state.jumps.length === 0;
@@ -59,13 +96,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Event Listeners
+    modeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            modeBtns.forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            const mode = e.target.getAttribute('data-mode');
+            gameState.setMode(mode);
+        });
+    });
+
+    btnSwap.addEventListener('click', () => {
+        gameState.swapCommutative();
+    });
+
     btnNew.addEventListener('click', () => {
         gameState.startNewGame();
     });
 
     btn10.addEventListener('click', () => {
         if (!gameState.addJump(10)) {
-            // Shake effect if fail logic was allowed but returned false
             btn10.classList.add('shake');
             setTimeout(() => btn10.classList.remove('shake'), 500);
         }
@@ -78,12 +127,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    btnNeg10.addEventListener('click', () => {
+        if (!gameState.addJump(-10)) {
+            btnNeg10.classList.add('shake');
+            setTimeout(() => btnNeg10.classList.remove('shake'), 500);
+        }
+    });
+
+    btnNeg1.addEventListener('click', () => {
+        if (!gameState.addJump(-1)) {
+            btnNeg1.classList.add('shake');
+            setTimeout(() => btnNeg1.classList.remove('shake'), 500);
+        }
+    });
+
     btnUndo.addEventListener('click', () => {
         gameState.undo();
     });
 
     btnReset.addEventListener('click', () => {
         gameState.reset();
+    });
+
+    // Help Modal Logic
+    btnHelp.addEventListener('click', () => {
+        helpModal.classList.remove('hidden');
+    });
+    btnCloseHelp.addEventListener('click', () => {
+        helpModal.classList.add('hidden');
+    });
+    // Close on outside click
+    helpModal.addEventListener('click', (e) => {
+        if (e.target === helpModal) {
+            helpModal.classList.add('hidden');
+        }
     });
 
     // Start one initially

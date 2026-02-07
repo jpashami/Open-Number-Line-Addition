@@ -31,8 +31,18 @@ export class Renderer {
         // Determine scale
         // Range from startNumber to targetSum + padding
         // If no jumps, default range
-        const minVal = state.startNumber - 5;
-        const maxVal = Math.max(state.targetSum, state.currentSum) + 5;
+        let minVal = state.startNumber - 5;
+        let maxVal = state.targetSum + 5;
+
+        // Adjust for current jumps state
+        if (state.mode === 'subtraction') {
+            minVal = Math.min(state.targetSum, state.currentSum) - 5;
+            maxVal = state.startNumber + 5;
+        } else {
+            // Addition
+            maxVal = Math.max(state.targetSum, state.currentSum) + 5;
+        }
+
         let range = maxVal - minVal;
         if (range < 20) range = 20;
 
@@ -70,6 +80,7 @@ export class Renderer {
         });
 
         // Draw Jumps
+        // Draw Jumps
         state.jumps.forEach((jump, index) => {
             const startX = getX(jump.from);
             const endX = getX(jump.to);
@@ -77,16 +88,32 @@ export class Renderer {
 
             // Height depends on jump size (10 vs 1)
             // Use positive height values relative to base
-            const jumpHeight = jump.type === 10 ? 80 : 40;
+            // Abs value for type (-10 is just as big as 10)
+            const jumpHeight = Math.abs(jump.type) === 10 ? 80 : 40;
             const controlY = baseY - jumpHeight; // Y is 0 at top
 
             const pathData = `M ${startX} ${baseY} Q ${midX} ${controlY} ${endX} ${baseY}`;
-            const color = jump.type === 10 ? '#4c51bf' : '#ed8936';
+
+            // Color logic: Primary for 10s, Secondary for 1s.
+            // Maybe Red for negative? Or same colors?
+            // Let's stick to size-based colors but maybe negative 10 is different?
+            // User likes aesthetics. Let's use Red/Pink for subtraction jumps to differentiate?
+            // Actually, consistency: 10 is Blue, 1 is Orange. 
+            // -10 can be Blue, -1 Orange.
+            let color = Math.abs(jump.type) === 10 ? '#4c51bf' : '#ed8936';
+            if (jump.type < 0) {
+                // Maybe slightly different shade?
+                // color = Math.abs(jump.type) === 10 ? '#e53e3e' : '#fc8181'; // Red shades
+                // Actually standard colors are less confusing.
+                // But let's add arrow marker?
+            }
 
             this.createPath(pathData, color, 3);
 
             // Label for jump
-            this.createText(midX, controlY - 15, `+${jump.type}`, color, '14px');
+            // Show +10 or -10
+            const sign = jump.type > 0 ? '+' : '';
+            this.createText(midX, controlY - 15, `${sign}${jump.type}`, color, '14px');
         });
 
         // Draw current position indicator (small circle)

@@ -1,45 +1,107 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Open Number Line Addition</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="app">
-      <header>
-        <h1>Open Number Line Addition</h1>
-        <div id="controls-top">
-          <div id="problem-display">
-            <span id="equation-text">Press 'New Problem' to start</span>
-          </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open Number Line Master</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/svg+xml" href="./public/favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app">
+    <header>
+      <div class="header-content">
+        <div class="title-group">
+          <h1>Open Number Line Master <span id="app-version" class="version-badge">v1.0.0</span></h1>
+          <button id="help-btn" class="icon-btn" title="How to Play">?</button>
+        </div>
+
+        <div id="mode-selector" class="mode-selector">
+          <button class="mode-btn active" data-mode="addition">Addition</button>
+          <button class="mode-btn" data-mode="commutative">Swap (Order)</button>
+          <button class="mode-btn" data-mode="subtraction">Subtraction</button>
+        </div>
+      </div>
+
+      <div id="controls-top">
+        <div id="problem-display">
+          <span id="equation-text">Press 'New Problem' to start</span>
+        </div>
+        <div class="top-actions">
+          <button id="swap-btn" class="secondary-btn hidden" title="Swap numbers to see what happens">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+            </svg>
+            Swap Order
+          </button>
           <button id="new-problem-btn" class="primary-btn">New Problem</button>
         </div>
-      </header>
-      
-      <main>
-        <div id="canvas-container">
-          <!-- SVG will be injected here or created by renderer -->
-          <svg id="number-line-svg" width="100%" height="100%"></svg>
-        </div>
-      </main>
+      </div>
+    </header>
 
-      <footer>
-        <div id="actions">
+    <main>
+      <div id="canvas-container">
+        <!-- SVG will be injected here or created by renderer -->
+        <svg id="number-line-svg" width="100%" height="100%"></svg>
+      </div>
+    </main>
+
+    <footer>
+      <div id="actions">
+        <!-- Positive / Addition Buttons -->
+        <div id="add-buttons" class="button-group">
           <button id="jump-10-btn" class="action-btn" disabled>+10</button>
           <button id="jump-1-btn" class="action-btn" disabled>+1</button>
         </div>
-        <div id="history">
-          <button id="undo-btn" class="secondary-btn" disabled>Undo</button>
-          <button id="reset-btn" class="secondary-btn" disabled>Reset</button>
+
+        <!-- Negative / Subtraction Buttons -->
+        <div id="sub-buttons" class="button-group hidden">
+          <button id="jump-neg-10-btn" class="action-btn sub-btn" disabled>-10</button>
+          <button id="jump-neg-1-btn" class="action-btn sub-btn" disabled>-1</button>
         </div>
-        <div id="feedback" class="feedback-msg"></div>
-      </footer>
+      </div>
+
+      <div id="history">
+        <button id="undo-btn" class="secondary-btn" disabled>Undo</button>
+        <button id="reset-btn" class="secondary-btn" disabled>Reset</button>
+      </div>
+      <div id="feedback" class="feedback-msg"></div>
+
+      <div class="legal-footer">
+        <small>Open Source (MIT License) - Provided AS-IS without warranty.</small>
+      </div>
+    </footer>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>How to Play</h2>
+          <button id="close-help-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <h3>Addition Mode</h3>
+          <p>Start at a number and add jumps of <strong>+10</strong> or <strong>+1</strong> to reach the target sum.</p>
+
+          <h3>Swap Mode</h3>
+          <p>Click "Swap Order" to flip the numbers (e.g., 25+30 becomes 30+25). Notice how the total is the same, but
+            the jumps look different!</p>
+
+          <h3>Subtraction Mode</h3>
+          <p>Start at a bigger number and jump backwards (<strong>-10</strong> or <strong>-1</strong>) to reach the
+            target.</p>
+
+          <p class="tip"><strong>Tip:</strong> Try to use big jumps (+10/-10) first!</p>
+        </div>
+      </div>
     </div>
-    <script type="module" src="./src/main.js"></script>
-  </body>
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+
 </html>
