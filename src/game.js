@@ -85,8 +85,47 @@ export class GameState {
         const from = this.currentSum;
         this.currentSum += amount;
         this.jumps.push({ type: amount, from, to: this.currentSum });
+
+        // Auto-grouping check
+        this.checkAutoGroup(amount);
+
         this.notify();
         return true;
+    }
+
+    checkAutoGroup(lastAmount) {
+        // Only group 1s
+        if (Math.abs(lastAmount) !== 1) return;
+
+        // Check if we have at least 10 jumps
+        if (this.jumps.length < 10) return;
+
+        // Get last 10 jumps
+        const last10 = this.jumps.slice(-10);
+
+        // Check if all are the same amount (1 or -1)
+        const allSame = last10.every(j => j.type === lastAmount);
+
+        if (allSame) {
+            // Found 10 consecutive 1s! Group them.
+            const firstJump = last10[0];
+            const lastJump = last10[9];
+
+            // Remove last 10 unit jumps
+            this.jumps.splice(this.jumps.length - 10, 10);
+
+            // Add grouped jump
+            const groupedAmount = lastAmount * 10;
+            this.jumps.push({
+                type: groupedAmount,
+                from: firstJump.from,
+                to: lastJump.to,
+                isGrouped: true // Flag for UI/Animation if needed
+            });
+
+            // We notify via the main flow, but we can also trigger a special event if we wanted.
+            // For now, the standard notify will redraw showing the big jump.
+        }
     }
 
     undo() {

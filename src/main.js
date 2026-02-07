@@ -20,6 +20,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnHelp = document.getElementById('help-btn');
     const btnCloseHelp = document.getElementById('close-help-btn');
     const helpModal = document.getElementById('help-modal');
+    const btnCustomTrigger = document.getElementById('custom-problem-btn');
+    const btnCloseCustom = document.getElementById('close-custom-btn');
+    const customModal = document.getElementById('custom-modal');
+    const btnStartCustom = document.getElementById('start-custom-btn');
+    const inputStart = document.getElementById('custom-start');
+    const inputChange = document.getElementById('custom-change');
+    const customError = document.getElementById('custom-error');
     const feedbackEl = document.getElementById('feedback');
     const addButtons = document.getElementById('add-buttons');
     const subButtons = document.getElementById('sub-buttons');
@@ -156,10 +163,38 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCloseHelp.addEventListener('click', () => {
         helpModal.classList.add('hidden');
     });
-    // Close on outside click
-    helpModal.addEventListener('click', (e) => {
+
+    // Custom Problem Modal Logic
+    btnCustomTrigger.addEventListener('click', () => {
+        customModal.classList.remove('hidden');
+        customError.classList.add('hidden');
+    });
+    btnCloseCustom.addEventListener('click', () => {
+        customModal.classList.add('hidden');
+    });
+    btnStartCustom.addEventListener('click', () => {
+        const start = parseInt(inputStart.value);
+        const change = parseInt(inputChange.value);
+
+        if (isNaN(start) || isNaN(change) || start < 0 || change <= 0) {
+            customError.classList.remove('hidden');
+            return;
+        }
+
+        gameState.startCustomGame(start, change);
+        customModal.classList.add('hidden');
+        // Clear inputs
+        inputStart.value = '';
+        inputChange.value = '';
+    });
+
+    // Close modals on outside click
+    window.addEventListener('click', (e) => {
         if (e.target === helpModal) {
             helpModal.classList.add('hidden');
+        }
+        if (e.target === customModal) {
+            customModal.classList.add('hidden');
         }
     });
 

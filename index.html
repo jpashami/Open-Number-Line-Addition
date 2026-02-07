@@ -17,7 +17,7 @@
     <header>
       <div class="header-content">
         <div class="title-group">
-          <h1>Open Number Line Master <span id="app-version" class="version-badge">v1.0.0</span></h1>
+          <h1>Open Number Line Master <span id="app-version" class="version-badge">v1.1.0</span></h1>
           <button id="help-btn" class="icon-btn" title="How to Play">?</button>
         </div>
 
@@ -37,8 +37,9 @@
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
             </svg>
-            Swap Order
+            Swap
           </button>
+          <button id="custom-problem-btn" class="secondary-btn">Custom</button>
           <button id="new-problem-btn" class="primary-btn">New Problem</button>
         </div>
       </div>
@@ -88,15 +89,43 @@
           <h3>Addition Mode</h3>
           <p>Start at a number and add jumps of <strong>+10</strong> or <strong>+1</strong> to reach the target sum.</p>
 
+          <h3>Grouping Magic ✨</h3>
+          <p>Make 10 little jumps (+1) in a row, and watch them combine into one big jump (+10)!</p>
+
           <h3>Swap Mode</h3>
-          <p>Click "Swap Order" to flip the numbers (e.g., 25+30 becomes 30+25). Notice how the total is the same, but
-            the jumps look different!</p>
+          <p>Click "Swap Order" to flip the numbers (e.g., 25+30 becomes 30+25).</p>
 
           <h3>Subtraction Mode</h3>
           <p>Start at a bigger number and jump backwards (<strong>-10</strong> or <strong>-1</strong>) to reach the
             target.</p>
 
           <p class="tip"><strong>Tip:</strong> Try to use big jumps (+10/-10) first!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Problem Modal -->
+    <div id="custom-modal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Create Your Own Problem</h2>
+          <button id="close-custom-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group">
+            <label for="custom-start">Start Number:</label>
+            <input type="number" id="custom-start" min="0" max="1000" placeholder="e.g. 25">
+          </div>
+          <div class="input-group">
+            <label for="custom-change">Amount to Add/Subtract:</label>
+            <input type="number" id="custom-change" min="1" max="500" placeholder="e.g. 15">
+          </div>
+
+          <p id="custom-error" class="error-msg hidden">Please enter valid positive numbers.</p>
+
+          <div class="modal-actions">
+            <button id="start-custom-btn" class="primary-btn">Start Game</button>
+          </div>
         </div>
       </div>
     </div>
