@@ -20,13 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnHelp = document.getElementById('help-btn');
     const btnCloseHelp = document.getElementById('close-help-btn');
     const helpModal = document.getElementById('help-modal');
-    const btnCustomTrigger = document.getElementById('custom-problem-btn');
-    const btnCloseCustom = document.getElementById('close-custom-btn');
-    const customModal = document.getElementById('custom-modal');
-    const btnStartCustom = document.getElementById('start-custom-btn');
-    const inputStart = document.getElementById('custom-start');
-    const inputChange = document.getElementById('custom-change');
-    const customError = document.getElementById('custom-error');
+
+    // Inline Edit elements
+    const displayMode = document.getElementById('display-mode');
+    const editMode = document.getElementById('edit-mode');
+    const btnEdit = document.getElementById('edit-btn');
+    const btnSaveCustom = document.getElementById('save-custom-btn');
+    const btnCancelEdit = document.getElementById('cancel-edit-btn');
+    const inputStart = document.getElementById('inline-start');
+    const inputChange = document.getElementById('inline-change');
+    const operatorText = document.getElementById('operator-text');
+
     const feedbackEl = document.getElementById('feedback');
     const addButtons = document.getElementById('add-buttons');
     const subButtons = document.getElementById('sub-buttons');
@@ -56,14 +60,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.targetSum !== undefined) {
             let equationHTML = '';
             if (state.mode === 'subtraction') {
-                // e.g. 50 - 20 = ? (Target is 30)
+                operatorText.textContent = '-';
                 if (state.isComplete()) {
                     equationHTML = `<span>${state.startNumber}</span> - <span>${state.numberToAdd}</span> = <span style="color:var(--success-color);">${state.targetSum}</span>`;
                 } else {
                     equationHTML = `<span>${state.startNumber}</span> - <span>${state.numberToAdd}</span> = <span>?</span>`;
                 }
             } else {
-                // Addition / Commutative
+                operatorText.textContent = '+';
                 if (state.isComplete()) {
                     equationHTML = `<span>${state.startNumber}</span> + <span>${state.numberToAdd}</span> = <span style="color:var(--success-color);">${state.targetSum}</span>`;
                 } else {
@@ -164,37 +168,39 @@ document.addEventListener('DOMContentLoaded', () => {
         helpModal.classList.add('hidden');
     });
 
-    // Custom Problem Modal Logic
-    btnCustomTrigger.addEventListener('click', () => {
-        customModal.classList.remove('hidden');
-        customError.classList.add('hidden');
+    // Inline Custom Problem Logic
+    btnEdit.addEventListener('click', () => {
+        displayMode.classList.add('hidden');
+        editMode.classList.remove('hidden');
+        inputStart.value = gameState.startNumber;
+        inputChange.value = gameState.numberToAdd;
+        inputStart.focus();
     });
-    btnCloseCustom.addEventListener('click', () => {
-        customModal.classList.add('hidden');
+
+    btnCancelEdit.addEventListener('click', () => {
+        displayMode.classList.remove('hidden');
+        editMode.classList.add('hidden');
     });
-    btnStartCustom.addEventListener('click', () => {
+
+    btnSaveCustom.addEventListener('click', () => {
         const start = parseInt(inputStart.value);
         const change = parseInt(inputChange.value);
 
         if (isNaN(start) || isNaN(change) || start < 0 || change <= 0) {
-            customError.classList.remove('hidden');
+            editMode.classList.add('shake');
+            setTimeout(() => editMode.classList.remove('shake'), 500);
             return;
         }
 
         gameState.startCustomGame(start, change);
-        customModal.classList.add('hidden');
-        // Clear inputs
-        inputStart.value = '';
-        inputChange.value = '';
+        displayMode.classList.remove('hidden');
+        editMode.classList.add('hidden');
     });
 
-    // Close modals on outside click
+    // Close on outside click
     window.addEventListener('click', (e) => {
         if (e.target === helpModal) {
             helpModal.classList.add('hidden');
-        }
-        if (e.target === customModal) {
-            customModal.classList.add('hidden');
         }
     });
 

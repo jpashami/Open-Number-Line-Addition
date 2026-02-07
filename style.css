@@ -109,6 +109,54 @@ h1 {
   color: white;
 }
 
+.equation-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inline-input {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  color: white;
+  padding: 5px 10px;
+  width: 80px;
+  font-family: var(--font-family);
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.inline-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.3);
+  border-color: white;
+}
+
+/* Hide arrows for number inputs */
+.inline-input::-webkit-outer-spin-button,
+.inline-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.edit-btn {
+  margin-left: 10px;
+}
+
+.save-btn {
+  background: var(--success-color);
+}
+
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.cancel-btn:hover {
+  background: var(--error-color);
+}
+
 main {
   flex: 1;
   position: relative;
@@ -329,6 +377,20 @@ footer {
   color: #a0aec0;
   font-size: 0.8rem;
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.support-link a {
+  color: #718096;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: bold;
+}
+
+.support-link a:hover {
+  color: var(--primary-color);
 }
 
 /* Custom Problem Inputs */
