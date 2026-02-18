@@ -420,6 +420,56 @@ footer {
   color: var(--text-color);
 }
 
+#app {
+  width: 100%;
+  max-width: 900px;
+  min-height: 600px;
+  height: 95vh;
+  max-height: 800px;
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+header {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+#controls-top {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 15px;
+  border-radius: 10px;
+}
+
+#problem-display {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+}
+
+footer {
+  padding: 10px 20px;
+  background: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
 .input-group input {
   padding: 12px;
   border: 2px solid #e2e8f0;
@@ -432,6 +482,124 @@ footer {
 .input-group input:focus {
   outline: none;
   border-color: var(--primary-color);
+}
+
+/* New Jump Presets */
+#jump-presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.jump-preset-btn {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-width: 50px;
+  color: var(--primary-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.jump-preset-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(76, 81, 191, 0.1);
+  border-color: var(--primary-color);
+}
+
+.jump-preset-btn:active {
+  transform: translateY(-1px);
+}
+
+.jump-preset-btn.sub-btn {
+  color: var(--error-color);
+}
+
+.jump-preset-btn.sub-btn:hover {
+  border-color: var(--error-color);
+  box-shadow: 0 4px 8px rgba(245, 101, 101, 0.1);
+}
+
+/* Custom Jump Area */
+#custom-jump-area {
+  background: #f8fafc;
+  padding: 8px 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+  border: 1px solid #edf2f7;
+  width: auto;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+#custom-jump-area label {
+  font-weight: 700;
+  color: #718096;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.custom-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.custom-input-group input {
+  width: 50px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-color);
+  font-family: var(--font-family);
+  padding: 4px;
+}
+
+.custom-input-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.1);
+}
+
+.custom-input-group .action-btn {
+  padding: 6px 12px;
+  font-size: 1rem;
+}
+
+.custom-input-group button.sub-btn {
+  background: var(--error-color);
+}
+
+.custom-input-group button.sub-btn:hover {
+  background: #e53e3e;
+}
+
+/* Give more space to the chart */
+footer {
+  padding: 15px 30px;
+}
+
+#canvas-container {
+  height: 100%;
+  min-height: 300px;
+}
+
+#history {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
 }
 
 .modal-actions {

@@ -25,23 +25,18 @@ export class Renderer {
 
         // Ensure we have dimensions
         const rect = this.svg.getBoundingClientRect();
-        if (rect.width > 0) this.width = rect.width;
-        if (rect.height > 0) this.height = rect.height;
+        this.width = rect.width || this.svg.clientWidth || 800;
+        this.height = rect.height || this.svg.clientHeight || 400;
 
         // Determine scale
-        // Range from startNumber to targetSum + padding
-        // If no jumps, default range
-        let minVal = state.startNumber - 5;
-        let maxVal = state.targetSum + 5;
+        let allValues = [state.startNumber, state.targetSum, state.currentSum];
+        state.jumps.forEach(j => {
+            allValues.push(j.from);
+            allValues.push(j.to);
+        });
 
-        // Adjust for current jumps state
-        if (state.mode === 'subtraction') {
-            minVal = Math.min(state.targetSum, state.currentSum) - 5;
-            maxVal = state.startNumber + 5;
-        } else {
-            // Addition
-            maxVal = Math.max(state.targetSum, state.currentSum) + 5;
-        }
+        let minVal = Math.min(...allValues) - 5;
+        let maxVal = Math.max(...allValues) + 5;
 
         let range = maxVal - minVal;
         if (range < 20) range = 20;
@@ -51,7 +46,9 @@ export class Renderer {
         const pixelsPerUnit = usableWidth / range;
 
         const getX = (val) => paddingX + (val - minVal) * pixelsPerUnit;
-        const baseY = this.height * 0.7;
+
+        // Adjust baseY to be more centered to allow labels above and below
+        const baseY = this.height * 0.5;
 
         // Draw Base Line
         this.createLine(paddingX - 20, baseY, this.width - paddingX + 20, baseY, '#cbd5e0', 4);
@@ -61,62 +58,52 @@ export class Renderer {
 
 
         // Draw Ticks and Numbers
-        // We only draw ticks for relevant numbers: start, current, and jump points
         const pointsOfInterest = new Set([state.startNumber]);
         state.jumps.forEach(j => {
             pointsOfInterest.add(j.from);
             pointsOfInterest.add(j.to);
         });
-        // Also target
         pointsOfInterest.add(state.targetSum);
 
-        // Sort points
         const sortedPoints = Array.from(pointsOfInterest).sort((a, b) => a - b);
 
         sortedPoints.forEach(val => {
             const x = getX(val);
-            this.createLine(x, baseY - 10, x, baseY + 10, '#4a5568', 2);
-            this.createText(x, baseY + 35, val, '#2d3748', '18px');
+            // Updated mode names
+            const isTarget = val === state.targetSum && (state.mode === 'compare' || state.story.unknown !== 'result');
+            const color = isTarget ? '#e53e3e' : '#4a5568';
+            this.createLine(x, baseY - 10, x, baseY + 10, color, isTarget ? 3 : 2);
+
+            // Draw label with some padding
+            this.createText(x, baseY + 35, val, color, '18px');
+
+            if (isTarget) {
+                this.createText(x, baseY - 25, 'Target', color, '12px');
+            }
         });
 
-        // Draw Jumps
         // Draw Jumps
         state.jumps.forEach((jump, index) => {
             const startX = getX(jump.from);
             const endX = getX(jump.to);
             const midX = (startX + endX) / 2;
 
-            // Height depends on jump size (10 vs 1)
-            // Use positive height values relative to base
-            // Abs value for type (-10 is just as big as 10)
-            const jumpHeight = Math.abs(jump.type) === 10 ? 80 : 40;
-            const controlY = baseY - jumpHeight; // Y is 0 at top
+            const absJump = Math.abs(jump.type);
+            const jumpHeight = Math.min(this.height * 0.4, Math.max(30, absJump * 5));
+            const controlY = baseY - jumpHeight;
 
             const pathData = `M ${startX} ${baseY} Q ${midX} ${controlY} ${endX} ${baseY}`;
 
-            // Color logic: Primary for 10s, Secondary for 1s.
-            // Maybe Red for negative? Or same colors?
-            // Let's stick to size-based colors but maybe negative 10 is different?
-            // User likes aesthetics. Let's use Red/Pink for subtraction jumps to differentiate?
-            // Actually, consistency: 10 is Blue, 1 is Orange. 
-            // -10 can be Blue, -1 Orange.
-            let color = Math.abs(jump.type) === 10 ? '#4c51bf' : '#ed8936';
-            if (jump.type < 0) {
-                // Maybe slightly different shade?
-                // color = Math.abs(jump.type) === 10 ? '#e53e3e' : '#fc8181'; // Red shades
-                // Actually standard colors are less confusing.
-                // But let's add arrow marker?
-            }
+            let color = absJump >= 10 ? '#4c51bf' : (absJump >= 5 ? '#38b2ac' : '#ed8936');
+
 
             this.createPath(pathData, color, 3);
 
-            // Label for jump
-            // Show +10 or -10
             const sign = jump.type > 0 ? '+' : '';
             this.createText(midX, controlY - 15, `${sign}${jump.type}`, color, '14px');
         });
 
-        // Draw current position indicator (small circle)
+        // Draw current position indicator
         const currentX = getX(state.currentSum);
         this.createCircle(currentX, baseY, 6, '#e53e3e');
     }

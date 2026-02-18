@@ -22,9 +22,10 @@
         </div>
 
         <div id="mode-selector" class="mode-selector">
-          <button class="mode-btn active" data-mode="addition">Addition</button>
-          <button class="mode-btn" data-mode="commutative">Swap (Order)</button>
-          <button class="mode-btn" data-mode="subtraction">Subtraction</button>
+          <button class="mode-btn active" data-mode="join">Join</button>
+          <button class="mode-btn" data-mode="separate">Separate</button>
+          <button class="mode-btn" data-mode="part-part-whole">Part-Part-Whole</button>
+          <button class="mode-btn" data-mode="compare">Compare</button>
         </div>
       </div>
 
@@ -76,17 +77,21 @@
     </main>
 
     <footer>
-      <div id="actions">
-        <!-- Positive / Addition Buttons -->
-        <div id="add-buttons" class="button-group">
-          <button id="jump-10-btn" class="action-btn" disabled>+10</button>
-          <button id="jump-1-btn" class="action-btn" disabled>+1</button>
-        </div>
+      <div id="jump-presets" class="button-group">
+        <button class="jump-preset-btn" data-jump="10">+10</button>
+        <button class="jump-preset-btn" data-jump="5">+5</button>
+        <button class="jump-preset-btn" data-jump="1">+1</button>
+        <button class="jump-preset-btn sub-btn" data-jump="-10">-10</button>
+        <button class="jump-preset-btn sub-btn" data-jump="-5">-5</button>
+        <button class="jump-preset-btn sub-btn" data-jump="-1">-1</button>
+      </div>
 
-        <!-- Negative / Subtraction Buttons -->
-        <div id="sub-buttons" class="button-group hidden">
-          <button id="jump-neg-10-btn" class="action-btn sub-btn" disabled>-10</button>
-          <button id="jump-neg-1-btn" class="action-btn sub-btn" disabled>-1</button>
+      <div id="custom-jump-area">
+        <label for="custom-jump-val">Custom Jump:</label>
+        <div class="custom-input-group">
+          <input type="number" id="custom-jump-val" value="2" min="1" max="50">
+          <button id="add-custom-btn" class="action-btn">+</button>
+          <button id="sub-custom-btn" class="action-btn sub-btn">-</button>
         </div>
       </div>
 

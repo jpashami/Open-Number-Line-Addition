@@ -1,16 +1,21 @@
 export class GameState {
     constructor() {
-        this.mode = 'addition'; // 'addition' | 'commutative' | 'subtraction'
+        this.mode = 'join'; // 'join', 'separate', 'compare', 'part-part-whole'
         this.startNumber = 0;
-        this.numberToAdd = 0;
         this.targetSum = 0;
         this.currentSum = 0;
-        this.jumps = []; // Array of { type: 10 | 1 | -10 | -1, from: number, to: number }
+        this.jumps = [];
         this.listeners = [];
 
-        // Cache for commutative swap
-        this.baseA = 0;
-        this.baseB = 0;
+        // Detailed story info
+        this.story = {
+            type: 'join',
+            subType: 'result-unknown',
+            text: '',
+            a: 0,
+            b: 0,
+            unknown: 'result' // 'result', 'change', 'start'
+        };
     }
 
     setMode(mode) {
@@ -19,84 +24,76 @@ export class GameState {
     }
 
     startNewGame() {
-        // Random number logic based on mode
-        if (this.mode === 'subtraction') {
-            // Subtraction: Start - Amount = Target
-            // e.g. 50 - 20 = 30.
-            // Start should be large enough.
-            this.startNumber = Math.floor(Math.random() * 50) + 40; // 40 to 90
-            this.numberToAdd = Math.floor(Math.random() * 30) + 5;  // Amount to subtract: 5 to 35
-            this.targetSum = this.startNumber - this.numberToAdd;
-        } else {
-            // Addition or Commutative
-            // A + B = Target
-            // Ensure A and B are different enough to make swapping interesting
-            // e.g. A=20, B=45 vs A=45, B=20
-            const A = Math.floor(Math.random() * 40) + 10;
-            const B = Math.floor(Math.random() * 40) + 10;
+        const stories = this.generateStory(this.mode);
+        this.story = stories[Math.floor(Math.random() * stories.length)];
 
-            this.baseA = A;
-            this.baseB = B;
-
-            this.startNumber = A;
-            this.numberToAdd = B;
-            this.targetSum = A + B;
+        // Setup game based on story
+        if (this.story.type === 'join' || this.story.type === 'part-part-whole') {
+            this.startNumber = this.story.unknown === 'start' ? 0 : this.story.a;
+            this.targetSum = this.story.a + this.story.b;
+        } else if (this.story.type === 'separate') {
+            this.startNumber = this.story.unknown === 'start' ? 0 : this.story.a;
+            this.targetSum = this.story.a - this.story.b;
+        } else if (this.story.type === 'compare') {
+            this.startNumber = this.story.a;
+            this.targetSum = this.story.b;
         }
 
         this.currentSum = this.startNumber;
         this.jumps = [];
         this.notify();
+    }
+
+    generateStory(mode) {
+        const A = Math.floor(Math.random() * 40) + 10;
+        const B = Math.floor(Math.random() * 20) + 5;
+
+        switch (mode) {
+            case 'join':
+                return [
+                    { type: 'join', subType: 'result-unknown', unknown: 'result', a: A, b: B, text: `Pat has ${A} marbles. Her brother gives her ${B}. How many does she have now?` },
+                    { type: 'join', subType: 'change-unknown', unknown: 'change', a: A, b: B, text: `Pat has ${A} marbles but wants ${A + B}. How many more does she need?` },
+                    { type: 'join', subType: 'start-unknown', unknown: 'start', a: A, b: B, text: `Pat has some marbles. Her brother gave her ${B} and now she has ${A + B}. How many did she start with?` }
+                ];
+            case 'separate':
+                return [
+                    { type: 'separate', subType: 'result-unknown', unknown: 'result', a: A + B, b: B, text: `Pat has ${A + B} marbles. She gives her brother ${B}. How many are left?` },
+                    { type: 'separate', subType: 'change-unknown', unknown: 'change', a: A + B, b: B, text: `Pat had ${A + B} marbles. She gave some away and now has ${A}. How many did she give?` }
+                ];
+            case 'part-part-whole':
+                return [
+                    { type: 'part-part-whole', subType: 'whole-unknown', unknown: 'result', a: A, b: B, text: `Pat has ${A} blue marbles and ${B} green marbles. How many in all?` },
+                    { type: 'part-part-whole', subType: 'part-unknown', unknown: 'change', a: A, b: B, text: `Pat has ${A + B} marbles. ${A} are blue, the rest are green. How many green?` }
+                ];
+            case 'compare':
+                return [
+                    { type: 'compare', subType: 'difference-unknown', unknown: 'change', a: B, b: A + B, text: `Pat has ${A + B} blue marbles and ${B} green marbles. How many more blue marbles does she have?` }
+                ];
+            default:
+                return [{ type: 'join', subType: 'result-unknown', unknown: 'result', a: 10, b: 5, text: 'Problem loading...' }];
+        }
     }
 
     startCustomGame(start, changeVal) {
         this.startNumber = start;
-        this.numberToAdd = changeVal;
-
-        if (this.mode === 'subtraction') {
-            this.targetSum = this.startNumber - this.numberToAdd;
-        } else {
-            // Addition or Commutative
-            this.targetSum = this.startNumber + this.numberToAdd;
-            this.baseA = this.startNumber;
-            this.baseB = this.numberToAdd;
-        }
-
+        this.targetSum = start + changeVal; // Default behavior
         this.currentSum = this.startNumber;
         this.jumps = [];
-        this.notify();
-    }
-
-    swapCommutative() {
-        if (this.mode !== 'commutative') return;
-
-        // Swap startNumber and numberToAdd logic
-        // If current start is baseA, switch to baseB
-        if (this.startNumber === this.baseA) {
-            this.startNumber = this.baseB;
-            this.numberToAdd = this.baseA;
-        } else {
-            this.startNumber = this.baseA;
-            this.numberToAdd = this.baseB;
-        }
-
-        // Target sum remains same
-        this.currentSum = this.startNumber;
-        this.jumps = [];
+        this.story.text = "Custom Problem";
         this.notify();
     }
 
     addJump(amount) {
-        // Check validity based on mode
-        if (this.mode === 'subtraction') {
-            // Target is smaller than currentSum
-            // Check if overshoot
-            if (this.currentSum + amount < this.targetSum) {
-                return false;
+        // We now allow any amount, but we still check for overshoot if it's subtraction logic
+        const isSubtracting = (this.mode === 'separate' && this.story.unknown !== 'start');
+
+        if (isSubtracting) {
+            if (this.currentSum + amount < this.targetSum && amount < 0) {
+                // return false; // Maybe allow overshoot? Teachers often like students to see they went too far.
             }
         } else {
-            // Addition
-            if (this.currentSum + amount > this.targetSum) {
-                return false;
+            if (this.currentSum + amount > this.targetSum && amount > 0) {
+                // return false;
             }
         }
 
@@ -104,7 +101,6 @@ export class GameState {
         this.currentSum += amount;
         this.jumps.push({ type: amount, from, to: this.currentSum });
 
-        // Auto-grouping check
         this.checkAutoGroup(amount);
 
         this.notify();
